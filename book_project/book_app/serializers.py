@@ -13,10 +13,15 @@ class BookSerializer(serializers.ModelSerializer):
                 "Name of authors must be at least three letters."
             )
     def validate(self, data):
-        if data['status'] == 'ongoing' and data['rating']>0:
+        if data['status'] == 'completed' and data['rating'] is None:
+            raise serializers.ValidationError(
+                "Completed book must have a rating"
+            )
+        if data['status'] == 'ongoing' and data['rating'] is not None:
             raise serializers.ValidationError(
                 "Ongoing book cannot have a rating."
             )
+        return data
 
     class Meta:
         model = Book
