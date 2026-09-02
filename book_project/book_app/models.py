@@ -16,8 +16,8 @@ class Book(models.Model):
     title = models.CharField(max_length=150)
     author = models.CharField(max_length=150)
     description = models.TextField(max_length=1000)
-    status = models.CharField(max_length=10,choices=STATUS_CHOICES, default="1")
-    rating = models.PositiveIntegerField(choices=RATING_CHOICES, default="ongoing")
+    status = models.CharField(max_length=10,choices=STATUS_CHOICES, default="ongoing")
+    rating = models.PositiveIntegerField(choices=RATING_CHOICES, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
