@@ -3,6 +3,7 @@ from rest_framework import generics
 from .models import Book
 from .serializers import BookSerializer
 from django.db.models import Q 
+from .pagination import BookPagination
 # Create your views here.
 
 class book_view(generics.ListCreateAPIView):
@@ -14,8 +15,11 @@ class book_view(generics.ListCreateAPIView):
         search = self.request.query_params.get('search')
         author = self.request.query_params.get('author')
 
+        #filter by status
         if status:
             queryset = queryset.filter(status=status)
+
+        #for search
         if search:
             queryset = queryset.filter(
                 Q(title__icontains=search)|
@@ -27,7 +31,8 @@ class book_view(generics.ListCreateAPIView):
             )
             
         return queryset
-        
+
+    pagination_class = BookPagination
         
 
 class book_details(generics.RetrieveUpdateDestroyAPIView):
