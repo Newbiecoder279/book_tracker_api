@@ -4,13 +4,18 @@ from .models import Book
 from .serializers import BookSerializer
 from django.db.models import Q 
 from .pagination import BookPagination
+from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 
 class book_view(generics.ListCreateAPIView):
     
     serializer_class = BookSerializer
+    pagination_class = BookPagination
+    permission_classes = [IsAuthenticated]
     def get_queryset(self):
-        queryset = Book.objects.all()
+        queryset = Book.objects.filter(
+            owner = self.request.user
+        )
         status = self.request.query_params.get('status')
         search = self.request.query_params.get('search')
         author = self.request.query_params.get('author')
@@ -31,10 +36,17 @@ class book_view(generics.ListCreateAPIView):
             )
             
         return queryset
+    def perform_create(self,serializer):
+        serializer.save(owner=self.request.user)
 
-    pagination_class = BookPagination
+    
         
 
 class book_details(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Book.objects.all()
+    def get_queryset(self):
+        
+        return Book.objects.filter(
+        owner = self.request.user
+        )
     serializer_class = BookSerializer
+    permission_classes = [IsAuthenticated]
